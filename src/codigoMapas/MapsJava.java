@@ -11,11 +11,9 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-/**
- * Clase padre desde donde se extienden el resto. Sirve principalmente para asignar/obtener propiedades básicas
- * a la hora de realizar una petición (clave, sensor, idioma, etc.) y para obtener un registro de todas las peticiones realizadas
- * @author Luis Marcos
- */
+/*
+clase base que permite acceder al uso de los mapas
+*/
 public abstract class MapsJava {
 
     //request properties 
@@ -28,17 +26,21 @@ public abstract class MapsJava {
     //Stock request
     private static String[][] stockRequest=new String[0][6];
 
-    
-
-    
-    //Abstract methods
+    /*metodos abstractos que permiten acceder a la información sin que ocurra errores, 
+    además de almacenarla y oltener su estatus*/
     protected abstract void onError(URL urlRequest,String status,Exception ex);
     protected abstract String getStatus(XPath xpath, Document document);
     protected abstract void storeInfoRequest(URL urlRequest,String info,String status,Exception exception);
     
 
-    //Protected methods
+    /*
+    metodos protegidos de la clase
+    */
     private static int numRequest=0;
+    
+    /*
+    esta función se encarga de almacenar los request 
+    */
     protected void storageRequest(String urlRequest,String info,String status,
             Exception exception){
         Date date = new Date();
@@ -56,10 +58,12 @@ public abstract class MapsJava {
             MapsJava.stockRequest[numRequest-1][5]="No exception";
         }else{
             MapsJava.stockRequest[numRequest-1][5]=exception.toString();
-        }
-        
+        } 
     }
     
+    /*
+    slecciona las propiedades de los requests 
+    */
     protected String getSelectPropertiesRequest(){
         return "&region=" + MapsJava.region + "&language=" + MapsJava.language + 
                 "&sensor=" + MapsJava.sensor;
@@ -91,13 +95,8 @@ public abstract class MapsJava {
         return result;
     }
     
-    /**
-    * Author: Christian d'Heureuse (www.source-code.biz, www.inventec.ch/chdh)
-    * Reallocates an array with a new size, and copies the contents
-    * of the old array to the new array.
-    * @param oldArray  the old array, to be reallocated.
-    * @param newSize   the new array size.
-    * @return          A new array with the same contents.
+    /*
+    recalcula el tamaño del array 
     */
     protected Object resizeArray (Object oldArray, int newSize) {
        int oldSize = java.lang.reflect.Array.getLength(oldArray);
@@ -110,15 +109,10 @@ public abstract class MapsJava {
        return newArray; 
     }
     
-    //Public methods
-    /**
-     * Comprueba si la clave de desarrollador API Google Maps es válida.
-     * @param key clave de desarrollador API Google Maps
-     * @return devuelve el estado de una petición con clave API. En caso de ser válida, devuelve
-     * "OK", en cualquier otro caso la clave no es correcta.
-     * @see MapsJava#setKey(java.lang.String) 
-     * @see MapsJava#getKey() 
-     */
+ 
+    /*
+    verfica que la llave del api exista si no es así mandara un error de uso
+    */
     public static String APIkeyCheck(String key){
         try{
             URL url=new URL("https://maps.googleapis.com/maps/api/place/search/xml?location=0,0&radius=1000" + 
@@ -138,139 +132,85 @@ public abstract class MapsJava {
         }
     }
     
-    //Public access to properties of the request (Getters/Setters)
-    /**
-     * Devuelve el tiempo de conexión máximo (milisegundos) de espera al servidor (NO FUNCIONA)
-     * @return int con tiempo máximo de conexión
-     * @see MapsJava#setConnectTimeout(int) 
-     */
+    //set y gets 
+    //metodos set y get de los métodos de tiempo de espera
     public static int getConnectTimeout() {
         return connectTimeout;
     }
-    /**
-     * Establece el tiempo máximo de espera (milisegundos) por el servidor (NO FUNCIONA)
-     * @param aConnectTimeout asigna tiempo máximo de conexión
-     * @see MapsJava#getConnectTimeout() 
-     */
+   
     public static void setConnectTimeout(int aConnectTimeout) {
         connectTimeout = aConnectTimeout;
     }
     
-    /**
-     * Obtiene la región de búsqueda de resultados (de forma predeterminada "es").
-     * Más info. sobre regiones en http://es.wikipedia.org/wiki/CcTLD
-     * @return devuelve la región de búsqueda actual
-     * @see MapsJava#setRegion(java.lang.String) 
+    /*
+    regresa la region de busqueda que ingreso l usuario normalmente se usa .cr para nuestro país
      */
     public static String getRegion() {
         return region;
     }
     
-    /**
-     * Establece la región de búsqueda de resultados (de forma predeterminada "es").
-     * Más info. sobre regiones en http://es.wikipedia.org/wiki/CcTLD
-     * @param aRegion asigna la región de búsqueda
-     * @see MapsJava#getRegion() 
-     */
+    /*
+    establece la región de busqueda
+    */
     public static void setRegion(String aRegion) {
         region = aRegion;
     }
 
-    /**
-     * Obtiene el idioma en el que se muestran los resultados (de forma predeterminada "es")
-     * Más info. sobre idiomas en https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1
-     * @return devuelve el idioma actual de los resultados
-     * @see MapsJava#setLanguage(java.lang.String) () 
+    /*
+    regresa el idioma que establecio el usuario
      */
     public static String getLanguage() {
         return language;
     }
-    /**
-     * Establece el idioma en el que se muestran los resultados (de forma predeterminada "es")
-     * Más info. sobre idiomas en https://spreadsheets.google.com/pub?key=p9pdwsai2hDMsLkXsoM05KQ&gid=1
-     * @param aLanguage establece el idioma de resultados
-     * @see MapsJava#getLanguage() 
-     */
+    /*
+    define el idioma
+    */
     public static void setLanguage(String aLanguage) {
         language = aLanguage;
     }
 
-    /**
-     * Obtiene si se está utilizando sensor GPS (GNSS) en las peticiones para obtener ubicación (de forma predeterminada es false)
-     * @return devuelve true en caso de utilización del sensor y false en caso contrario
-     * @see MapsJava#setSensor(java.lang.Boolean) 
+    /*
+    variable verifica si el dispositvo que usa tiene un sensor(gps)
      */
     public static Boolean getSensor() {
         return sensor;
     }
-    /**
-     * Establece el uso o no uso de un sensor GPS (GNSS) en las peticiones para obtener ubicación (de forma predeterminada false)
-     * @param aSensor en caso de ser true, se fuerza a utilizar sensor. Si es false, no se utiliza
-     * @see MapsJava#getSensor() 
-     */
+    
     public static void setSensor(Boolean aSensor) {
         sensor = aSensor;
     }
     
-    /**
-     * Obtiene la clave actual de desarrollador de API Google Maps (sólo necesario para Places)
-     * @return obtiene string con clave actual
-     * @see MapsJava#setKey(java.lang.String) 
-     * @see MapsJava#APIkeyCheck(java.lang.String) 
-     */
+    /*
+    obtiene la api key
+    */
     public static String getKey() {
         return APIKey;
     }
 
-    /**
-     * Establece clave de desarrollador API Google Maps (sólo necesario para Places)
-     * @param aKey string con clave API de desarrollador
-     * @see MapsJava#getKey() 
-     * @see MapsJava#APIkeyCheck(java.lang.String) 
-     */
     public static void setKey(String aKey) {
         APIKey = aKey;
     }
     
     
-    //Public acces to stockRequest 
-    /**
-     * Obtiene registro de todas las peticiones HTTP realizadas. Conforma un String[n][6] con la siguiente
-     * estructura: <br/>
-     * [0][0]="Número de petición";<br/>[0][1]="Fecha/hora petición";<br/>[0][2]="status de la petición";<br/>
-     * [0][3]="URL de la petición";<br/>[0][4]="Información sobre petición realizada";<br/>[0][5]="Excepciones generadas";<br/>
-     * Ejemplo:<br/>
-     * [0][0]="1";<br/>[0][1]="Mon Oct 07 11:30:31 CEST 2013";<br/>[0][2]="OK";<br/>
-     * [0][3]=""http://maps.google.com/maps/api/geocode/xml?address=Madrid&region=es&language=es&sensor=false"";<br/>[0][4]="Geocoding request";<br/>[0][5]="No exception";<br/>
-     * Tipos de status:<br/>
-     * OK: indica que la solicitud del API se realizó correctamente.<br/>
-     * INVALID_REQUEST: indica que la solicitud del API se formó de forma incorrecta.<br/>
-     * OVER_QUERY_LIMIT: indica que el solicitante ha superado los límites.<br/>
-     * REQUEST_DENIED: indica que el API no completó la solicitud, posiblemente porque el solicitante no puedo incluir correctamente un parámetro sensor válido.<br/>
-     * UNKNOWN_ERROR: indica un error desconocido.<br/>
-     * NO STATUS: indica un error al realizar la petición<br/>
-     * @return devuelve un array de dos dimensiones con las diferentes peticiones realizadas
+    /*
+    Obtiene registro de todas las peticiones HTTP realizadas. Conforma un String[n][6] con la siguiente estructura: 
+       [0][0]="Número de petición";<br/
+       [0][1]="Fecha/hora petición";<br/>
+       [0][2]="status de la petición";<br/>
+       [0][3]="URL de la petición";<br/>
+       [0][4]="Información sobre petición realizada";<br/>
+       [0][5]="Excepciones generadas";<br/>
+    @return devuelve un array de dos dimensiones con las diferentes peticiones realizadas
      */
     public static String[][] getStockRequest() {
         return stockRequest;
     }
 
-    /**
+    /*
      * Obtiene registro de la última petición HTTP realizada. Conforma un String[6] con la siguiente estructura:</br>
      * [0]="Número de petición";<br/>[1]="Fecha/hora petición";<br/>[2]="status de la petición";<br/>
      * [3]="URL de la petición";<br/>[4]="Información sobre petición realizada";<br/>[5]="Excepciones generadas";<br/>
-     * Ejemplo:<br/>
-     * [0]="1";<br/>[1]="Mon Oct 07 11:30:31 CEST 2013";<br/>[2]="OK";<br/>
-     * [3]="http://maps.google.com/maps/api/geocode/xml?address=Madrid&region=es&language=es&sensor=false";<br/>[4]="Geocoding request";<br/>[5]="No exception";<br/>
-     * Tipos de status:<br/>
-     * OK: indica que la solicitud del API se realizó correctamente.<br/>
-     * INVALID_REQUEST: indica que la solicitud del API se formó de forma incorrecta.<br/>
-     * OVER_QUERY_LIMIT: indica que el solicitante ha superado los límites.<br/>
-     * REQUEST_DENIED: indica que el API no completó la solicitud, posiblemente porque el solicitante no puedo incluir correctamente un parámetro sensor válido.<br/>
-     * UNKNOWN_ERROR: indica un error desconocido.<br/>
-     * NO STATUS: indica un error al realizar la petición<br/>
      * @return array de una dimensión con la última petición realizada
-     * @see MapsJava#getStockRequest() 
      */
     public static  String[] getLastRequestRequest() {
         String[] stockRequestTemp=new String[6];
@@ -278,44 +218,29 @@ public abstract class MapsJava {
         return stockRequestTemp;
     }
     
-    /**
-     * Obtiene el status de la última petición realizada.<br/>
-     * Tipos de status:<br/>
-     * OK: indica que la solicitud del API se realizó correctamente.<br/>
-     * INVALID_REQUEST: indica que la solicitud del API se formó de forma incorrecta.<br/>
-     * OVER_QUERY_LIMIT: indica que el solicitante ha superado los límites.<br/>
-     * REQUEST_DENIED: indica que el API no completó la solicitud, posiblemente porque el solicitante no puedo incluir correctamente un parámetro sensor válido.<br/>
-     * UNKNOWN_ERROR: indica un error desconocido.<br/>
-     * NO STATUS: indica un error al realizar la petición<br/>
-     * @return devuelve string con estado de última petición
-     * @see MapsJava#getStockRequest() 
-     */
+    /*
+    devuelve el status de la última petición
+    */
     public static String getLastRequestStatus() {
          return stockRequest[stockRequest.length-1][2];
     }
     
-    /**
-     * Devuelve URL asociada a la última petición realizada.
-     * @return retorna string con URL de la última petición (por ejemplo, "http://maps.google.com/maps/api/geocode/xml?address=Madrid&region=es&language=es&sensor=false"
-     * @see MapsJava#getStockRequest() 
-     */
+    /*
+    obtiene el url del request que se hizo
+    */
     public static String getLastRequestURL() {
         return stockRequest[stockRequest.length-1][3];
     }
     
-    /**
-     * Devuelve información sobre el tipo de la última petición realizada
-     * @return retorna string con información de la última petición realizada (por ejemplo, "Geocoding request")
-     * @see MapsJava#getStockRequest() 
+    /*
+    regresa la información del request
      */
     public static String getLastRequestInfo() {
          return stockRequest[stockRequest.length-1][4];
     }
     
-    /**
-     * Devuelve información sobre la posible excepción generada en la última petición.
-     * @return retorna string con información sobre error de la última petición (por ejemplo, "No exception")
-     * @see MapsJava#getStockRequest() 
+    /*
+    obtiene la información del último request hecho que pueda tener algún error
      */
     public static String getLastRequestException() {
          return stockRequest[stockRequest.length-1][5];
