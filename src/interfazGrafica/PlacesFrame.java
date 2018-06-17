@@ -1,6 +1,4 @@
-
 package interfazGrafica;
-
 
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -20,15 +18,9 @@ import maps.java.Places;
 import maps.java.ShowMaps;
 import maps.java.StaticMaps;
 
-/**
- *
- * @author Luis Marcos
- */
 public class PlacesFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form PlacesFrame
-     */
+    //variables para poder usar la información 
     private String referencePlace;
     private Places ObjPlaces=new Places();
     private String[][] datosReview;
@@ -36,6 +28,9 @@ public class PlacesFrame extends javax.swing.JFrame {
     private ShowMaps ObjShowMaps=new ShowMaps();
     private StaticMaps ObjStaticMaps=new StaticMaps();
     
+    /*
+    carga el icono de la imagen 
+    */
     private Icon cargarImagen(String url) throws IOException{
         Image imagen;
         imagen=ImageIO.read(new URL(url));
@@ -44,7 +39,11 @@ public class PlacesFrame extends javax.swing.JFrame {
         Icon iconImage=(Icon)imgIcon;
         return iconImage;
     }
-            
+    
+    /*
+    aplica en los campos de texto la informacion del lugar cada dato[x] es una parte de la inforación 
+    que se obtiene al hacer el request en el código viene explicado cada variable con su dato
+    */
     private void cargarInfo() throws UnsupportedEncodingException, MalformedURLException, IOException{
         String[] datos=ObjPlaces.getPlacesDetails(this.referencePlace);
         this.JText_DP_Nombre.setText(datos[0]);
@@ -65,6 +64,9 @@ public class PlacesFrame extends javax.swing.JFrame {
         
     }
     
+    /*
+    esta función obtiene las reviews de los usuarios de un determinado local
+    */
     private void seleccionarReview(){
          if(datosReview.length>0){
              int indice=this.jList_Review.getSelectedIndex();
@@ -73,7 +75,11 @@ public class PlacesFrame extends javax.swing.JFrame {
              jTextArea_Review.setText(datosReview[indice][2]);
          }
     }
-        
+    
+    /*
+    carga los reviews y comentarios de las personas que han dado opinión sobre
+    el lugar
+    */    
     private void cargarReview() throws UnsupportedEncodingException, MalformedURLException, IOException{
         datosReview=ObjPlaces.getPlaceReview(this.referencePlace);
         DefaultListModel modelo = new DefaultListModel();
@@ -90,6 +96,9 @@ public class PlacesFrame extends javax.swing.JFrame {
         }
     }
     
+    /*
+    permite hacer la solicitud de las fotos del lugar via web
+    */
     private void cargarFoto() throws UnsupportedEncodingException, MalformedURLException, IOException{
         this.fotosReferencia=ObjPlaces.getPhotosReference();
         DefaultListModel modelo = new DefaultListModel();
@@ -105,7 +114,10 @@ public class PlacesFrame extends javax.swing.JFrame {
             this.jList_Fotos.setModel(modelo);
         }
     }
-       
+    
+    /*
+    permite seleccionar la foto que importa el sistema
+    */
     private void seleccionarFoto() throws MalformedURLException{
          if(fotosReferencia.size()>0){
              int indice=this.jList_Fotos.getSelectedIndex();
@@ -115,7 +127,10 @@ public class PlacesFrame extends javax.swing.JFrame {
              this.jLabe_Imagen.setIcon(iconImage);
          }
     }
-            
+    
+    /*
+    manda el codigo de refencia del lugar que se busca
+    */
     public PlacesFrame(String _referencePlace) throws UnsupportedEncodingException {
         initComponents();
         referencePlace=_referencePlace;
