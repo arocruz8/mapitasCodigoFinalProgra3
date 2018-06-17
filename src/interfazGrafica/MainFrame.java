@@ -42,9 +42,6 @@ import org.jsoup.Jsoup;
 
 public class MainFrame extends javax.swing.JFrame {
     
-    /**
-     * Creates new form MainFrame
-     */
     public MainFrame() {
         initComponents();
         capturarEventos();
@@ -52,24 +49,21 @@ public class MainFrame extends javax.swing.JFrame {
 
     private EventsStatusBar ObjStatusBar;
   
-    
-   private Geocoding ObjGeocoding=new Geocoding();
-//    private Elevation ObjElevation=new Elevation();
+    /*variables de la clases que permiten ser usadas para hacer los request
+    y obtener la información que se solicita
+    */
+    private Geocoding ObjGeocoding=new Geocoding();
     private ShowMaps ObjShowMaps=new ShowMaps();
-//    private Route ObjRoute=new Route();
-//    private StreetView ObjStreetView=new StreetView();
     private StaticMaps ObjStaticMaps=new StaticMaps();
     private Places ObjPlaces=new Places();
     
+    /*
+    permite cambiar las opcines de la barra del menú
+    */
     private void capturarEventos(){
         ObjStatusBar=new EventsStatusBar(this.jPanel5);
         recorrerComponentes(jTabbedPane1.getComponents());
-//        recorrerComponentes(jPanel1.getComponents());
-//        recorrerComponentes(jPanel2.getComponents());
-//        recorrerComponentes(jPanel3.getComponents());
         recorrerComponentes(jPanel4.getComponents());
-//        recorrerComponentes(jPanel6.getComponents());
-//        recorrerComponentes(jPanel7.getComponents());
         recorrerComponentes(jPanel8.getComponents());
         recorrerComponentes(jPanel9.getComponents());
     }
@@ -104,6 +98,9 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
+    /*
+    se encarga de verificar que la clave api exista y pertenezca al usuario
+    */
     private void comprobarClaveApi(){
         String status=MapsJava.APIkeyCheck(JText_Clave.getText());
         if("OK".equals(status)){
@@ -112,9 +109,17 @@ public class MainFrame extends javax.swing.JFrame {
             this.JLabel_Clave.setText("No Válida");
         }
     }
+    
+    /*
+    comprueba el estatus de la conexión wifi que se tenga a la hora de correr el programa
+    */
     private void comprobarStatus(JLabel label){
          label.setText(MapsJava.getLastRequestStatus());
     }
+    
+    /*
+    Carga de jlist donde se guarda parte de la información que se solicita
+    */
     private void cargarJList(ArrayList<String> arrayList, JList jlist){
         DefaultListModel listModel = new DefaultListModel();
         for(int i=0; i<arrayList.size(); i++) {
@@ -122,30 +127,26 @@ public class MainFrame extends javax.swing.JFrame {
         }
         jlist.setModel(listModel);
     }
-//    private void seleccionarItemList(){
-//        String itemSelecionado=(String)this.jList_CI_DirEncon.getSelectedValue();
-//        this.JText_CI_DireEnc.setText(itemSelecionado);
-//    }
-//    
-//    private void rellenarPeticiones(){
-//        String[][] peticiones=MapsJava.getStockRequest();
-//        String[] columnas=new String[6];
-//        columnas[0]="Número";columnas[1]="Hora";columnas[2]="Status";columnas[3]="URL";columnas[4]="Información";columnas[5]="Excepción";
-//        TableModel tableModel=new DefaultTableModel(peticiones, columnas);
-//       this.jTable_Peticiones.setModel(tableModel);
-//    }
-    
-    
+
+    /*
+    Se encarga de mostrar el mapa si se recibe el string de la dirección
+    */
     private void mostrarMapa(String direccion) throws IOException, URISyntaxException{
         String direccionMapa=ObjShowMaps.getURLMap(direccion);
         Desktop.getDesktop().browse(new URI(direccionMapa));
     }
     
+    /*
+    Se encarga de mostrar el mapa si se reciben las coordenadas de latitud o longitud
+    */
     private void mostrarMapa(Double latitud, Double longitud) throws URISyntaxException, IOException{
         String direccionMapa=ObjShowMaps.getURLMap(latitud,longitud);
         Desktop.getDesktop().browse(new URI(direccionMapa));
     }
     
+    /*
+    Lo que hace esta función es seleccionar el formato de imagen para mostrar el mapa
+    */
     private StaticMaps.Format seleccionarFormato(){
         StaticMaps.Format formato= StaticMaps.Format.png;
         switch(JCombo_ME_Formato.getSelectedItem().toString()){
@@ -168,6 +169,10 @@ public class MainFrame extends javax.swing.JFrame {
         return formato;
     }
     
+    /*
+    Esta función permite sleccionar el tipo de vista de mapa ya sea arerea, normal
+    o solo la marca en donde se encuentra el lugar
+    */
     private StaticMaps.Maptype seleccionarTipoMapa(){
         StaticMaps.Maptype tipoMapa= StaticMaps.Maptype.roadmap;
         switch(JCombo_ME_TipoMapa.getSelectedItem().toString()){
@@ -187,19 +192,10 @@ public class MainFrame extends javax.swing.JFrame {
         return tipoMapa;
     }
         
-//    private void rellenarTablaRuta(String[][] ruta){
-//        String[] columnas=new String[5];
-//        columnas[0]="Duración tramo";columnas[1]="Distancia tramo";columnas[2]="Indicaciones";columnas[3]="Latitud";columnas[4]="Longitud";
-//        for(int i=0;i<ruta.length;i++){
-//            try {
-//                 ruta[i][2]=Jsoup.parse(ruta[i][2]).text();
-//            } catch (Exception e) {
-//            }
-//        }
-//        TableModel tableModel=new DefaultTableModel(ruta, columnas);
-//        this.jTable_Ruta_Tramos.setModel(tableModel);
-//    }
-
+    /*
+    la función se encarga de guardar los datos que ingreso el usuario en la ventana
+    de propiedades, la region, el idioma, el sensor(gps) y su llave api de desarrollador 
+    */
     private void guardarCambios(){
          MapsJava.setConnectTimeout(Integer.valueOf(JText_Conexion.getText()));
          MapsJava.setLanguage(JText_idioma.getText());
@@ -212,6 +208,10 @@ public class MainFrame extends javax.swing.JFrame {
          MapsJava.setKey(JText_Clave.getText());
     }
      
+    /*
+    la función se encarga de crear el mapa con la información digitada por el usuario,
+    apartir de del objeto ObjStaticMaps además de usar las escalas para poder modificar el zoom o el rango 
+    */
      private void crearMapa() throws MalformedURLException, UnsupportedEncodingException{
          if(!JText_ME_Direccion.getText().isEmpty()){
              this.JLabel_ME_Imagen.setText("");
@@ -226,6 +226,10 @@ public class MainFrame extends javax.swing.JFrame {
             }
          }
      }
+     
+     /*
+     Crea el objeto tabla para almacenar los datos de la request 
+     */
      private class MyTableModel extends DefaultTableModel {
 
          public MyTableModel(Object[][] data, Object[] columnNames) {
@@ -244,6 +248,14 @@ public class MainFrame extends javax.swing.JFrame {
       }
 
      }
+     
+     /*
+    La funcion llena la tabla con la información del último request que realizo el usuario, String[] getLastRequestRequest: 
+     en esta propiedad se muestra toda la información de la última petición realizada. 
+     En concreto es un vector con 6 posiciones, con el siguiente orden:
+    [0]="Número de petición"; [1]="Fecha/hora petición"; [2]="status de la petición";
+    [3]="URL de la petición"; [4]="Información sobre petición realizada"; [5]="Excepciones generadas";
+     */
     private void rellenarPlaces(String[][] resultadoPlaces) throws MalformedURLException, IOException{
         this.JLabel_Pl_Status.setText(MapsJava.getLastRequestStatus());
         if(resultadoPlaces.length>0){
@@ -268,9 +280,18 @@ public class MainFrame extends javax.swing.JFrame {
             seleccionarReferencia();
         }
     }
+    
+    /*
+    borra el elemento que se registra en la tbale creada 
+    */
     private void borrarTable(JTable jtable){
         jtable.setModel(new DefaultTableModel());
     }
+    
+    /*
+    define los datos en los campos de texto muchos de estos datos se han guardado en 
+    una array list 
+    */
     private void places() throws UnsupportedEncodingException, MalformedURLException, IOException{
         if(!JText_Pl_Direccion.getText().isEmpty()){
             borrarTable(jTable_Pl_places);
@@ -301,6 +322,10 @@ public class MainFrame extends javax.swing.JFrame {
         
     }
     
+    /*
+    la función hace otra ventana con la información del lugar que se busco
+    además de mostrar las reviews y las fotos del lugar
+    */
     private void abrirFramePlaces(String referenciaPlace) throws UnsupportedEncodingException{
         if(!referenciaPlace.isEmpty()){
             for(UIManager.LookAndFeelInfo laf:UIManager.getInstalledLookAndFeels()){
