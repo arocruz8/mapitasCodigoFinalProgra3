@@ -442,7 +442,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(153, 153, 255));
+        jButton3.setBackground(new java.awt.Color(255, 102, 51));
         jButton3.setText("Guardar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -554,7 +554,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Propiedades", jPanel4);
 
-        JButton_ME_Buscar.setBackground(new java.awt.Color(153, 153, 255));
+        JButton_ME_Buscar.setBackground(new java.awt.Color(255, 102, 51));
         JButton_ME_Buscar.setText("Crear mapa");
         JButton_ME_Buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -705,7 +705,7 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jScrollPane6.setViewportView(jTable_Pl_places);
 
-        JButton_ME_Buscar1.setBackground(new java.awt.Color(153, 153, 255));
+        JButton_ME_Buscar1.setBackground(new java.awt.Color(255, 102, 51));
         JButton_ME_Buscar1.setText("Buscar");
         JButton_ME_Buscar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -751,7 +751,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel39.setText("Referencia");
 
-        jButton6.setBackground(new java.awt.Color(153, 153, 255));
+        jButton6.setBackground(new java.awt.Color(255, 102, 51));
         jButton6.setText("Ver local");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -852,7 +852,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Places", jPanel9);
 
-        jPanel5.setBackground(new java.awt.Color(146, 178, 206));
+        jPanel5.setBackground(new java.awt.Color(255, 102, 51));
         jPanel5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(173, 173, 173), new java.awt.Color(224, 224, 224), null, null));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -881,7 +881,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
