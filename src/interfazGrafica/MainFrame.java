@@ -1019,6 +1019,7 @@ public class MainFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 new MainFrame().setVisible(true);
+                new MainFrame().setTitle("Buscadores de lugares en google maps");
             }
         });
     }
