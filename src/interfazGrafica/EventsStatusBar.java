@@ -10,6 +10,11 @@ public class EventsStatusBar implements MouseListener{
     private JPanel statusBar;
     private JLabel info=new JLabel("Listo");
     
+    /*
+    se encarga de cambiar los enventos que ocurren el jpanel5 lo que hace es que
+    permite que aparezacan los comentarios de lo que va ocurriendo en el proceso
+    */
+    
     public EventsStatusBar(JPanel statusbar){
         statusbar.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.statusBar=statusbar;
