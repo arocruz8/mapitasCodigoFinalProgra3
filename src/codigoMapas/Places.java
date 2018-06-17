@@ -1,6 +1,5 @@
 package codigoMapas;
 
-
 import java.awt.Image;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -16,16 +15,17 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-/**
- * REQUIERE CLAVE DESARROLLADOR API GOOGLE MAPS
- *Los usuarios con una clave de API se permite 1 000 solicitudes por cada período de 24 horas.<br/>
- * Los usuarios que hayan verificado su identidad a través de la consola de las API se permiten 100 000 solicitudes por
- * cada período de 24 horas. Se requiere una tarjeta de crédito para verificar, al permitir la facturación en la consola.
- * Se pedimos su tarjeta de crédito exclusivamente para validar su identidad. Su tarjeta no se cobrará por el uso de la API de Places.
- * @author Luis Marcos
- */
 public class Places extends MapsJava {
-
+    /*
+    MalformedURLException sirve para poder obtener la url de forma correcta evitando los problemas
+    que se puedan generar
+    */
+    
+    
+    /*
+    se crean variables con los urls que permiten hacer los reques gracias a la libreria
+    soup son los url base después se complementan con los datos que ingresa el usuario
+    */
     private final String URLRoot="https://maps.googleapis.com/maps/api/place/search/xml";
     private final String URLDetails="https://maps.googleapis.com/maps/api/place/details/xml";
     private final String URLPhoto="https://maps.googleapis.com/maps/api/place/photo";
@@ -33,30 +33,19 @@ public class Places extends MapsJava {
     private final String pathStatus="PlaceSearchResponse/status";
     private final String pathDetailsStatus="PlaceDetailsResponse/status";
     
+    //permite guardar las fotos del lugar al que se le hizo request
     private ArrayList<String> photosReference;
 
     /**
-     * Devuelve el conjunto de referencias de fotografías. Para obtenerlas, se REQUIERE QUE 
-     * <b>PREVIAMENTE SE LLAME A LA FUNCIÓN getPlaceReview, y en caso de haber fotografías, se almacenarán</b>
-     * las referencias. Si no hubiese fotografías, se devolverá un ArrayList vacío.<br/>
-     * Para obtener las fotografías asociadas a las referencias, hay que llamar a la función
-     * getPhoto y enviarle como parámetro la referencia.
-     * @return ArrayList con las diferentes referencias de las fotografías
-     * @see Places#getPlaces(double, double, int, java.lang.String, java.lang.String, maps.java.Places.Rankby, java.util.ArrayList) 
-     * @see Places#getPlaceReview(java.lang.String) 
-     * @see Places#getPhoto(java.lang.String, int) 
-     * 
-     */
+    devuelve las fotos del ultimo request que se realizo
+    */
     public ArrayList<String> getPhotosReference() {
         return photosReference;
     }
     
-    /**
-     * Enumeración con los diferentes tipos de ordenación de resultados.<br/>
-     * <b>Rankby.prominence</b> --> Esta opción permite ordenar los resultados por importancia.<br/>
-     * <b>Rankby.distance</b> -->  Esta opción permite disponer los resultados en orden ascendente en función de la distancia a la que se encuentren de la 
-     * ubicación especificada.
-     */
+    /*
+    permite guardar el dato de la puntuación que tiene el lugar
+    */
     public enum Rankby{prominence,distance}
     
     @Override
@@ -75,12 +64,19 @@ public class Places extends MapsJava {
             return null;
         }
     }
-
+    
+    /*
+    guarda la información del request
+    */
     @Override
     protected void storeInfoRequest(URL urlRequest, String info, String status, Exception exception) {
         super.storageRequest(urlRequest.toString(), info, status, exception);
     }
     
+    /*
+    guarda los detalles del lugar en una matriz [][] y e ciclo sirve para buscar
+    el nodo que se guarda para posteriormente objetener su contenido
+    */
     private String[][] getNodesPlaces(ArrayList<NodeList> nodes){
         String[][] result=new String[1000][6];
         for(int i = 0; i < nodes.size();i++){
@@ -93,6 +89,10 @@ public class Places extends MapsJava {
         return result;
     }
     
+    /*
+    crea el url si se digitan las cordenadas geograficas con el metodo URLEncoder que com dije 
+    anteriormte codifica la las variables con el link base
+    */
     private URL createURL(double latitude, double longitude,int radius,String keyword,String namePlace,
             Rankby rankby,ArrayList<String> types) throws UnsupportedEncodingException, MalformedURLException{
         
@@ -124,35 +124,12 @@ public class Places extends MapsJava {
     }
     
     /**
-     * Busca información sobre locales/lugares (places) y devuelve información asociada a esos lugares. Máximo 20 lugares por petición.<br/>
-     * Devuelve un String[n][6] con la siguiente información:<br/>
-     * [n][0]="Nombre del lugar";<br/>[n][1]="Dirección (vecindad)";<br/>[n][2]="Latitud";<br/>
-     * [n][3]="Longitud";<br/>[n][4]="URL del icono asociado al tipo de place";<br/>[n][5]="Referencia del lugar";<br/>
-     * Ejemplo:<br/>
-     * [n][0]="Museo Nacional del Prado";<br/>[n][1]="Paseo del Prado, s/n, Madrid";<br/>[n][2]="40.4137530";<br/>
-     * [n][3]="-3.6922420";<br/>[n][4]="http://maps.gstatic.com/mapfiles/place_api/icons/museum-71.png";<br/>[n][5]="CoQBdQAAAG
-     * YWr6ievgvJK00OcgmBZ6JmiWsq8wine3KsT-9m4fGySNCqZIulwJkE7rdl254BjcmBNrSRMtVFxZdznkkf1YWmy9wQmGSANm61SJwbgJbnF
-     * lP-0CsVKgUm73nAiUi3f3JT1gps_G7okwI7kHYmJsCpr2pGksSz9kdaI4wWAtVdEhBBps21G3BIkTX7a6XfcfOmGhQO-Ugg0AEY2gE4K
-     * 6_kKj-c61HVpw";<br/>
-     * @param latitude (OBLIGATORIO) latitud (junto con longitud), indica el punto alrededor del cual se quiere obtener información de sitios
-     * @param longitude (OBLIGATORIO) longitud (junto con latitud), indica el punto alrededor del cual se quiere obtener información de sitios
-     * @param radius (OBLIGATORIO) define la distancia (en metros) dentro de la que se deben mostrar resultados de sitios
-     * @param keyword  indica un término que se debe comparar con todo el contenido indexado por Google para este sitio (por ejemplo, el nombre, 
-     * el tipo y la dirección, así como las opiniones de los clientes y otro contenido de terceros).
-     * @param namePlace indica un término que se debe comparar con los nombres de sitios
-     * @param rankby especifica el orden en que se deben mostrar los resultados. <br/>
-     * Rankby.prominence --> Esta opción permite ordenar los resultados por importancia.<br/>
-     * Rankby.distance -->  Esta opción permite disponer los resultados en orden ascendente en función de la distancia a la que se encuentren de la 
-     * ubicación especificada. <br/>REQUIERE ESTABLECER keyword, namePlace o types.
-     * @param types restringe los resultados a los sitios que coinciden como mínimo con uno de los tipos especificados. <br/>Más info. sobre tipos de locales en
-     * https://developers.google.com/places/documentation/supported_types?hl=es
-     * @return devuelve string bidimensional con información sobre places. <br/>
-     * En caso de error retorna null.
-     * @see Rankby
-     * @see Places#getPhotosReference() 
-     * @see Places#getPlacesDetails(java.lang.String) 
-     * @see Places#getPlaceReview
-     */
+    devuelve la información del request del lugar que se pidio este dato[][] es de este tipo en 
+    el primer [] lo que hace es regresar el lugar actual de busqueda que se solicita y el [] contiene
+    la información asociada a este lugar, el uso del xpath lo que hace es  permite buscar información 
+    dentro de un XML, navegar entre etiquetas y atributos, toda esta info se guarda en la NodeList para
+    su posterior uso
+    */
     public String[][] getPlaces(double latitude, double longitude,int radius,String keyword,String namePlace,
             Rankby rankby,ArrayList<String> types) throws UnsupportedEncodingException, MalformedURLException{
         URL url=createURL(latitude,longitude,radius,keyword,namePlace,rankby,types);
@@ -190,6 +167,10 @@ public class Places extends MapsJava {
         }
     }
     
+    /*
+    obtiene los detalles de la información del nodo que se buscó que correspone al 
+    segundo [] del arreglo explicado anteriormente
+    */
     private String[] getNodesDetails(ArrayList<NodeList> nodes){
         String[] result=new String[8];
         for(int i = 0; i < nodes.size();i++){
@@ -214,29 +195,20 @@ public class Places extends MapsJava {
         }
     }
     
+    /*
+    crea el url si se busca con la referencia de un lugar en especifco
+    */
     private URL createURL(String reference) throws UnsupportedEncodingException, MalformedURLException{
         URL urlReturn=new URL(URLDetails + "?reference=" + URLEncoder.encode(reference, "utf-8") + 
                 super.getSelectPropertiesRequest() + "&key=" + MapsJava.getKey());
         return urlReturn;
     }
     
-    /**
-     * Obtiene detalles de un local a partir de su referencia. La referencia se obtiene a través de una búsqueda de 
-     * places (getPlaces), ya que en los resultados devueltos el último lugar corresponde a la referencia de un lugar
-     * [i][5]<br/>
-     * Devuelve un String[5] con la siguiente información:<br/>
-     * [0]="Nombre local";<br/>[1]="Vecindad";<br/>[2]="Número de teléfono";<br/>
-     * [3]="Dirección del local";<br/>[4]="URL página Google+";<br/>[5]="Puntuación loca (sobre 5)";<br/>
-     * [6]="URL del icono asociado al tipo de place";<br/>[7]="Página web del local";<br/>
-     * Ejemplo:<br/>
-     * [0]="Museo Nacional del Prado";<br/>[1]="Paseo del Prado, s/n, Madrid";<br/>[2]="913 30 28 00";<br/>
-     * [3]="Paseo del Prado, s/n, Madrid, España";<br/>[4]="https://plus.google.com/105513221084832515311/about?hl=es";<br/>[5]="4.6";<br/>
-     * [6]="http://maps.gstatic.com/mapfiles/place_api/icons/museum-71.png";<br/>[7]="http://www.museodelprado.es/";<br/>
-     * @param referencePlace referencia del place (se obtiene a través de la función getPlace)
-     * @return devuelve String[8] con la información del local.<br/>
-     * En caso de error devuelve null
-     * @see Places#getPlaces(double, double, int, java.lang.String, java.lang.String, maps.java.Places.Rankby, java.util.ArrayList) 
-     */
+    /*
+    Obtiene detalles de un local a partir de su referencia. La referencia se obtiene a través de una 
+    búsqueda de places (getPlaces), ya que en los resultados devueltos el último lugar corresponde a 
+    la referencia de un lugar [i][5].
+    */
     public String[] getPlacesDetails(String referencePlace) throws UnsupportedEncodingException, MalformedURLException{
         URL url=createURL(referencePlace);
         try {
@@ -280,6 +252,9 @@ public class Places extends MapsJava {
         }
     }
     
+    /*
+    obtiene el nodo con los detalles de las reviews del lugar buscado
+    */
     private String[][] getNodesReview(ArrayList<NodeList> nodes){
         String[][] result=new String[1000][4];
         for(int i = 0; i < nodes.size();i++){
@@ -292,6 +267,10 @@ public class Places extends MapsJava {
         return result;
     }
     
+    /*
+    obtiene las fotos del lugar que buscó las recorré y regresa
+    el resulatdo si es el mismo del conenido
+    */
     private ArrayList<String> getNodesPhoto(NodeList node){
        ArrayList<String> result=new ArrayList<>();
              for (int j = 0, n = node.getLength(); j < n; j++) {
@@ -301,30 +280,11 @@ public class Places extends MapsJava {
         return result;
     }
     
-    /**
-     * Obtiene las reviews de un determinado local. La referencia se obtiene a través de una búsqueda de 
-     * places (getPlaces), ya que en los resultados devueltos el último lugar corresponde a la referencia de un lugar
-     * [i][5]<br/>
-     * Devuelve un String[n][4] con la siguiente información:<br/>
-     * [n][0]="Fecha de la review (en tiempo UNIX en segundos)";<br/>[n][1]="Nombre del autor";<br/>
-     * [n][2]="Texto de la review";<br/>[n][3]="URL Google+ del autor";<br/>
-     * Ejemplo:<br/>
-     * [n][0]="1380809161";<br/>[n][1]="sara robles";<br/>
-     * [n][2]="Es una de las mejores pinacotecas del mundo, con gran variedad de obras de diversos artistas, 
-     * cuenta con exposiciones temporales de artistas recopilando obras de diversos museos del mundo, esta 
-     * todo muy cuidado y esta bien de precio y la ubicacion es genial, y lo recomiendo al maximo si eres 
-     * amante del arte es un lugar que no debes de dejar de visitar en madrid y si no eres amante del arte 
-     * tambien es un lugar que no te puedes perder. Goya, Velazquez y todos los grandes maestros 
-     * te estan esperando.";<br/>[n][3]="https://plus.google.com/116072533644897622969";<br/>
-     * Adicionalmente, y en caso de haber fotografías del local, la referencia a estas fotografías se puede obtener
-     * a través de la función getPhotosReference.
-     * @param referencePlace referencia del place (se obtiene a través de la función getPlace)
-     * @return devuelve un array bidimensional [i][4] con la información de las reviews.<br/>
-     * En caso de error devuelve null
-     * @see Places#getPlaces(double, double, int, java.lang.String, java.lang.String, maps.java.Places.Rankby, java.util.ArrayList) 
-     * @see Places#getPhotosReference() 
-     * @see Places#getPhoto(java.lang.String, int) 
-     */
+    /*
+    Obtiene las reviews detalladas de un local a partir de su referencia. La referencia se obtiene a 
+    través de una búsqueda de places (getPlaces), ya que en los resultados devueltos el último lugar
+    corresponde a la referencia de un lugar [i][5].
+    */
     public String[][] getPlaceReview(String referencePlace) throws UnsupportedEncodingException, MalformedURLException{
         URL url=createURL(referencePlace);
         try {
@@ -370,18 +330,9 @@ public class Places extends MapsJava {
         return urlReturn;
     }
     
-    /**
-     * Devuelve la foto del local a través de su referencia. Dicha referencia, se obtiene a partir de 
-     * una petición previa de detalles del local (getPlaceReview), que, en caso de haber fotografías, 
-     * almacena todas sus referencias (dichas referencias se obtiene con la función getPhotosReference.
-     * @param photoreference string con referencia de fotografía
-     * @param maxWidth ancho máximo de la imagen devuelta
-     * @return devuelve la imagen asociada a dicha referencia del local<br/>
-     * En caso de error, devuelve null
-     * @see Places#getPlaces(double, double, int, java.lang.String, java.lang.String, maps.java.Places.Rankby, java.util.ArrayList) 
-     * @see Places#getPlacesDetails(java.lang.String) 
-     * @see Places#getPhotosReference() 
-     */
+    /*
+    obtiene las fotos del lugar usando photoreference
+    */
     public Image getPhoto(String photoreference,int maxWidth) throws MalformedURLException{
         URL url=createURL(photoreference,maxWidth);
         try {
