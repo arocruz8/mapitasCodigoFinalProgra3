@@ -553,6 +553,7 @@ public class PlacesFrame extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PlacesFrame().setVisible(true);
+                new PlacesFrame().setTitle("Detalles del sitio");
             }
         });
     }
