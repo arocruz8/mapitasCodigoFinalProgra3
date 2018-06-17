@@ -15,14 +15,11 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-/**
- * El uso del API de codificación geográfica de Google está sujeto a un límite de 2.500 solicitudes de codificación geográfica al día.<br/>
- * El API de codificación geográfica solo se puede utilizar en combinación con un mapa de Google.
- * @author Luis Marcos
- * @see MapsJava
- */
-public class Geocoding extends MapsJava{
 
+public class Geocoding extends MapsJava{
+    /*
+    se crea la variable con el url para poder hacer el request de la golocalización 
+    */
     private final String URLRoot="http://maps.google.com/maps/api/geocode/xml";
     private final String pathStatus="GeocodeResponse/status";
     private final String pathPostalcode="GeocodeResponse/result/address_component";
@@ -30,24 +27,15 @@ public class Geocoding extends MapsJava{
     private String addressFound;
     private String postalcode;
     
-    /**
-     * Devuelve la dirección encontrada a partir de la enviada como parámetro en la función getCoordinates.
-     * <b>REQUIERE PRIMERAMENTE HACER PETICIÓN DE COORDENADAS (getCoordinates).</b>
-     * @return devuelve la dirección encontrada.
-     * En caso de no encontrar dirección, devuelve "No data"
-     * @see Geocoding#getCoordinates(java.lang.String) 
+    /*
+    devuele la dirrreción que sen encontro
      */
     public String getAddressFound() {
         return addressFound;
     }
     
-    /**
-     * Devuelve el código postal asociado a una dirección postal (se debe indicar calle/número) o coordenada geográfica.
-     * <b>REQUIERE PRIMERAMENTE HACER PETICIÓN DE COORDENADAS O DE DIRECCIÓN (getCoordinates o getAddress).</b>
-     * @return devuelve el código postal asociado a la petición
-     * En caso de no encontrar código postal, devuelve "No data"
-     * @see Geocoding#getAddress(java.lang.Double, java.lang.Double) 
-     * @see Geocoding#getCoordinates(java.lang.String) 
+    /*
+    devuelve la dirección del codigo postal del lugar
      */
     public String getPostalcode() {
         return postalcode;
@@ -70,11 +58,13 @@ public class Geocoding extends MapsJava{
         }
     }
     
+    //guarda la información 
     @Override
     protected void storeInfoRequest(URL urlRequest, String info, String status, Exception exception) {
         super.storageRequest(urlRequest.toString(), "Geocoding request", status, exception);
     }
-
+    
+    //guarda la info del lugar en el nodo de tipo NodoList 
     private String getNodesPostalcode(NodeList node){
          String result="No data";
          int i=0;
@@ -88,7 +78,10 @@ public class Geocoding extends MapsJava{
         }
         return result;
     }
-
+    
+    /*
+    crea los url dependiendo de que digito el usuario si las coorddenadas o texto para su posterior busqueda
+    */
     private URL createURL(String address) throws UnsupportedEncodingException, MalformedURLException{
         URL urlReturn=new URL(URLRoot + "?address=" + URLEncoder.encode(address, "utf-8") + super.getSelectPropertiesRequest());
         return urlReturn;
@@ -99,15 +92,9 @@ public class Geocoding extends MapsJava{
         return urlReturn;
     }
     
-    /**
-     * Esta función transforma una dirección especificada (como "Madrid, Puerta del Sol"), en coordenadas geográficas
-     * (40.4171111,-3.7031133).
-     * @param address dirección postal que se quiere codificar de forma geográfica
-     * @return devuelve un Point2D.Double donde la "x" es latitud y la "y" es longitud.
-     * Devuelve 0.0 o null en caso de error.
-     * @see Geocoding#getAddressFound()
-     * @see Geocoding#getPostalcode() 
-     */
+    /*
+    transforma la dirección de tipo string en las coordenadas de latitud y longitud
+    */
     public Point2D.Double getCoordinates(String address) throws UnsupportedEncodingException, MalformedURLException{
         this.addressFound="";
         URL url=createURL(address);
@@ -147,15 +134,9 @@ public class Geocoding extends MapsJava{
             }
      }
     
-    /**
-     * Esta función "traduce" coordenadas geográficas (como 40.4171111,-3.7031133), en una dirección postal ("Madrid, Puerta del Sol")
-     * @param latitude latitud del punto a codificar
-     * @param longitude longitud del punto a codificar
-     * @return devuelve un ArrayList<String> con todas las direcciones postales asociadas al punto especificado. Índices
-     * menores del ArrayList, especifican direcciones postales más específicas.
-     * Devuelve null en caso de error.
-     * @see Geocoding#getPostalcode() 
-     */
+    /*
+    convierte la dirección dada en cordenadas a texto que pasa a ser usado en una variable tipo string
+    */
     public ArrayList<String> getAddress(Double latitude, Double longitude) throws UnsupportedEncodingException, MalformedURLException{
         URL url=createURL(latitude,longitude);
             try {
