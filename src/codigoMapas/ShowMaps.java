@@ -36,11 +36,11 @@ public class ShowMaps extends maps.java.MapsJava{
          return urlReturn.toString();
     }
     
-    /**
-     * Crea la URL con la coordenada geográfica del mapa web asociado 
-     * @param latitude latitud del punto a mostrar
-     * @param longitude longitud del punto a mostrar
-     * @return devuelve un string con la URL asociada al mapa web
+    /*
+     Crea la URL con la coordenada geográfica del mapa web asociado 
+     @param latitude latitud del punto a mostrar
+     @param longitude longitud del punto a mostrar
+     @return devuelve un string con la URL asociada al mapa web
      */
     public String getURLMap(Double latitude, Double longitude) throws MalformedURLException{
         URL urlReturn=new URL(URLRoot + String.valueOf(latitude)+ "%2C" + String.valueOf(longitude) + "&output=embed");
