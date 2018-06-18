@@ -12,12 +12,12 @@ public class ShowMaps extends maps.java.MapsJava{
 
     @Override
     protected void onError(URL urlRequest, String status, Exception ex) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     protected String getStatus(XPath xpath, Document document) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
@@ -25,10 +25,8 @@ public class ShowMaps extends maps.java.MapsJava{
                 super.storageRequest(urlRequest.toString(), "Map request", "OK", null);
     }
     
-    /**
-     * Crea la URL con la dirección del mapa web asociado a dicha dirección
-     * @param address dirección postal del mapa a mostrar
-     * @return devuelve un string con la URL asociada al mapa web
+    /*
+     Crea la URL con la dirección del mapa web asociado a dicha dirección
      */
     public String getURLMap(String address) throws MalformedURLException, UnsupportedEncodingException{
          URL urlReturn=new URL(URLRoot + URLEncoder.encode(address, "utf-8") + "&output=embed");
@@ -38,9 +36,6 @@ public class ShowMaps extends maps.java.MapsJava{
     
     /*
      Crea la URL con la coordenada geográfica del mapa web asociado 
-     @param latitude latitud del punto a mostrar
-     @param longitude longitud del punto a mostrar
-     @return devuelve un string con la URL asociada al mapa web
      */
     public String getURLMap(Double latitude, Double longitude) throws MalformedURLException{
         URL urlReturn=new URL(URLRoot + String.valueOf(latitude)+ "%2C" + String.valueOf(longitude) + "&output=embed");
