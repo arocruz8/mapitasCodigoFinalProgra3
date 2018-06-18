@@ -36,7 +36,7 @@ public class Places extends MapsJava {
     //permite guardar las fotos del lugar al que se le hizo request
     private ArrayList<String> photosReference;
 
-    /**
+    /*
     devuelve las fotos del ultimo request que se realizo
     */
     public ArrayList<String> getPhotosReference() {
@@ -75,7 +75,7 @@ public class Places extends MapsJava {
     
     /*
     guarda los detalles del lugar en una matriz [][] y e ciclo sirve para buscar
-    el nodo que se guarda para posteriormente objetener su contenido
+    el nodo que se guarda para posteriormente obtener su contenido
     */
     private String[][] getNodesPlaces(ArrayList<NodeList> nodes){
         String[][] result=new String[1000][6];
